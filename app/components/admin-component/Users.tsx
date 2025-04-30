@@ -1,104 +1,42 @@
-"use client"
+"use client";
 
-import UserScreen from "./AdminUsersTable"
-
-
-// Sample user data
-const userData = [
-  {
-    id: 1,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 2,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 3,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 4,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 5,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 6,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 7,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  {
-    id: 8,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  },
-  // Add more users to reach 57 total
-  // This is just a sample, in a real app this would come from an API
-]
-
-// Generate more users to reach 57 total
-for (let i = 9; i <= 57; i++) {
-  userData.push({
-    id: i,
-    firstName: "Secret",
-    lastName: "Assad User",
-    email: "asssa@gmail.com",
-    phone: "090 000 0000",
-    joinedDate: "21st Mar. 2023",
-    joinedTime: "02:04:05",
-  })
-}
+import UserScreen, { User } from "./AdminUsersTable";
+import { userApi } from "@/app/api/users";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function UsersPage() {
+  // Properly type the users state
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await userApi.getUsers();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        // Consider adding error state to show to users
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
-      <UserScreen data={userData} />
+      <UserScreen data={users} />
     </div>
-  )
+  );
 }
-
