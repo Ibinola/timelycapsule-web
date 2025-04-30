@@ -14,7 +14,8 @@ export default function AdminLayout({
   const [currentRouteName, setCurrentRouteName] = useState("");
   const pathname = usePathname(); // Get the current route
 
-  // Extract the last part of the route as the page name
+  const isLoginRoute = pathname === "/admin/login";
+
   useEffect(() => {
     const pathSegments = pathname
       .split("/")
@@ -24,11 +25,9 @@ export default function AdminLayout({
         ? pathSegments[pathSegments.length - 1]
         : "Dashboard";
 
-    // Capitalize the first letter
     setCurrentRouteName(pageName.charAt(0).toUpperCase() + pageName.slice(1));
   }, [pathname]);
 
-  // Close mobile menu when resizing to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -45,17 +44,21 @@ export default function AdminLayout({
   };
 
   return (
-    <div className="px-8">
-      <div className="flex  gap-6">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar
-            currentRouteName={currentRouteName}
-            toggleMobileMenu={toggleMobileMenu}
-          />
-          <main className="flex-1">{children}</main>
+    <div className="">
+      {isLoginRoute ? (
+        <main className="flex-1">{children}</main>
+      ) : (
+        <div className="flex gap-6">
+          <Sidebar />
+          <div className="flex-1 flex flex-col">
+            <Navbar
+              currentRouteName={currentRouteName}
+              toggleMobileMenu={toggleMobileMenu}
+            />
+            <main className="flex-1">{children}</main>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

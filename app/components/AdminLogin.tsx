@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation"; // <-- import router
 import { Formik, Form, Field } from "formik";
 import * as z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -16,14 +17,27 @@ const loginSchema = z.object({
 });
 
 export default function AdminLogin() {
+  const router = useRouter(); // <-- initialize router
+
   const initialValues = {
     email: "",
     password: "",
     rememberMe: false,
   };
-  const handleSubmit = (values: typeof initialValues) => {
-    // Handle form submission
-    console.log(values);
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    try {
+      // Simulate login or validate user
+      console.log(values);
+
+      // TODO: Add real login/auth logic here
+
+      // Redirect on success
+      router.push("/admin/dashboard");
+    } catch (error) {
+      console.error("Login failed", error);
+      // Optionally: show error message to user
+    }
   };
 
   return (
@@ -57,7 +71,6 @@ export default function AdminLogin() {
         >
           {({ isSubmitting }) => (
             <Form className="flex flex-col gap-4">
-              {/* Imported existing email Input */}
               <AuthInput
                 label="Email Address"
                 name="email"
@@ -66,8 +79,6 @@ export default function AdminLogin() {
                 width="100%"
                 variant="admin"
               />
-
-              {/* Imported existing password Input */}
               <AuthInput
                 label="Password"
                 name="password"
@@ -76,8 +87,6 @@ export default function AdminLogin() {
                 width="100%"
                 variant="admin"
               />
-
-              {/* Remember Me Checkbox */}
               <div className="flex items-center gap-2">
                 <Field
                   type="checkbox"
@@ -92,8 +101,6 @@ export default function AdminLogin() {
                   Remember Me
                 </label>
               </div>
-
-              {/* Imported existing submit Button */}
               <Button
                 label="PROCEED"
                 type="submit"

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,7 +23,7 @@ const navItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: House },
   { name: "Capsules", href: "/admin/capsules", icon: TrendingUp },
   { name: "Report", href: "/admin/reports", icon: CreditCard },
-  { name: "User Management", href: "/admin/user", icon: Wallet },
+  { name: "Users", href: "/admin/users", icon: Wallet },
 ];
 
 const bottomNavItems = [

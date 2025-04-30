@@ -1,101 +1,121 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { ChevronDown, Calendar } from "lucide-react"
-// import Button from "../Button"
-import SortableTableHeader from "../sortable-table-header"
-import Button from "../paginationButton"
+"use client";
+import { useState, useEffect } from "react";
+import { ChevronDown, Calendar, Loader2 } from "lucide-react";
+import SortableTableHeader from "../sortable-table-header";
+import Button from "../paginationButton";
+import { mockCapsuleService } from "@/app/api/capsules/mock/service";
 
 // Define the capsule type for better type safety
 export interface Capsule {
-  id: number
-  title: string
-  date: string
-  receiver: string
-  email: string
-  sender: string
-  type: string
-  expiry: string
-  status: string
+  id: number;
+  title: string;
+  date: string;
+  receiver: string;
+  email: string;
+  sender: string;
+  type: string;
+  expiry: string;
+  status: string;
 }
 
-interface TableWithFiltersProps {
-  data: Capsule[]
-  onFilterChange?: (filteredData: Capsule[]) => void
-}
+type SortDirection = "asc" | "desc" | null;
+type SortField =
+  | "title"
+  | "receiver"
+  | "sender"
+  | "type"
+  | "expiry"
+  | "status"
+  | null;
 
-type SortDirection = "asc" | "desc" | null
-type SortField = "title" | "receiver" | "sender" | "type" | "expiry" | "status" | null
-
-export default function TableWithFilters({ data, onFilterChange }: TableWithFiltersProps) {
-  const [selectedStatus, setSelectedStatus] = useState("All")
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
-  const [searchKeyword, setSearchKeyword] = useState("")
-  const [filteredData, setFilteredData] = useState<Capsule[]>(data)
+export default function AdminCapsulesTable() {
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [allCapsules, setAllCapsules] = useState<Capsule[]>([]);
+  const [filteredData, setFilteredData] = useState<Capsule[]>([]);
 
   // Sorting state
-  const [sortField, setSortField] = useState<SortField>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>(null)
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+  // Fetch mock data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const data = await mockCapsuleService.getCapsules();
+        setAllCapsules(data);
+        setFilteredData(data);
+      } catch (error) {
+        console.error("Error fetching capsules:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Apply filters and sorting when values change
   useEffect(() => {
-    let result = [...data]
+    if (allCapsules.length === 0) return;
+
+    let result = [...allCapsules];
 
     // Filter by status
     if (selectedStatus !== "All") {
-      result = result.filter((item) => item.status === selectedStatus)
+      result = result.filter((item) => item.status === selectedStatus);
     }
 
     // Filter by search keyword
     if (searchKeyword) {
-      const keyword = searchKeyword.toLowerCase()
+      const keyword = searchKeyword.toLowerCase();
       result = result.filter(
         (item) =>
           item.title.toLowerCase().includes(keyword) ||
           item.receiver.toLowerCase().includes(keyword) ||
           item.sender.toLowerCase().includes(keyword) ||
           item.type.toLowerCase().includes(keyword),
-      )
+      );
     }
 
     // Apply sorting if active
     if (sortField && sortDirection) {
       result = [...result].sort((a, b) => {
-        let valueA = a[sortField]
-        let valueB = b[sortField]
+        let valueA = a[sortField];
+        let valueB = b[sortField];
 
         // Special case for title/date field
         if (sortField === "title") {
-          valueA = a.title.toLowerCase()
-          valueB = b.title.toLowerCase()
+          valueA = a.title.toLowerCase();
+          valueB = b.title.toLowerCase();
         }
 
-        if (valueA < valueB) return sortDirection === "asc" ? -1 : 1
-        if (valueA > valueB) return sortDirection === "asc" ? 1 : -1
-        return 0
-      })
+        if (valueA < valueB) return sortDirection === "asc" ? -1 : 1;
+        if (valueA > valueB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
     }
 
     // Update filtered data
-    setFilteredData(result)
-
-    // Notify parent component if callback provided
-    if (onFilterChange) {
-      onFilterChange(result)
-    }
-  }, [selectedStatus, searchKeyword, data, onFilterChange, sortField, sortDirection])
-
-  // Handle filter button click
-  const handleFilterClick = () => {
-    // Additional filtering logic for date range could be implemented here
-    // For now, we're already filtering reactively with the useEffect
-  }
+    setFilteredData(result);
+  }, [selectedStatus, searchKeyword, allCapsules, sortField, sortDirection]);
 
   // Handle sorting
   const handleSort = (field: SortField, direction: SortDirection) => {
-    setSortField(direction === null ? null : field)
-    setSortDirection(direction)
+    setSortField(direction === null ? null : field);
+    setSortDirection(direction);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      </div>
+    );
   }
 
   return (
@@ -158,8 +178,7 @@ export default function TableWithFilters({ data, onFilterChange }: TableWithFilt
           <Button
             label="Filter"
             className="h-10 bg-emerald-800 hover:bg-emerald-500 text-white font-medium"
-            onClick={handleFilterClick}
-            disabled={filteredData.length === data.length}
+            disabled={filteredData.length === allCapsules.length}
           />
         </div>
       </div>
@@ -179,7 +198,9 @@ export default function TableWithFilters({ data, onFilterChange }: TableWithFilt
                 label="Receiver's name/Email"
                 onSort={(direction) => handleSort("receiver", direction)}
                 isActive={sortField === "receiver"}
-                initialDirection={sortField === "receiver" ? sortDirection : null}
+                initialDirection={
+                  sortField === "receiver" ? sortDirection : null
+                }
                 className="hidden md:table-cell"
               />
               <SortableTableHeader
@@ -208,30 +229,38 @@ export default function TableWithFilters({ data, onFilterChange }: TableWithFilt
                 isActive={sortField === "status"}
                 initialDirection={sortField === "status" ? sortDirection : null}
               />
-              <th className="px-4 py-3 text-left font-medium text-sm border-b">Action</th>
+              <th className="px-4 py-3 text-left font-medium text-sm border-b">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredData.length > 0 ? (
               filteredData.map((capsule) => (
                 <tr key={capsule.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3  last:border-r-0">
+                  <td className="px-4 py-3 last:border-r-0">
                     <div className="font-medium">{capsule.title}</div>
                     <div className="text-sm text-gray-500">{capsule.date}</div>
                   </td>
-                  <td className="px-4 py-3  last:border-r-0 hidden md:table-cell">
+                  <td className="px-4 py-3 last:border-r-0 hidden md:table-cell">
                     <div className="font-medium">{capsule.receiver}</div>
                     <div className="text-sm text-gray-500">{capsule.email}</div>
                   </td>
-                  <td className="px-4 py-3  last:border-r-0 hidden md:table-cell">{capsule.sender}</td>
-                  <td className="px-4 py-3 text-gray-500 last:border-r-0">{capsule.type}</td>
-                  <td className="text-sm text-gray-500 px-4 py-3  last:border-r-0 hidden lg:table-cell">
+                  <td className="px-4 py-3 last:border-r-0 hidden md:table-cell">
+                    {capsule.sender}
+                  </td>
+                  <td className="px-4 py-3 text-gray-500 last:border-r-0">
+                    {capsule.type}
+                  </td>
+                  <td className="text-sm text-gray-500 px-4 py-3 last:border-r-0 hidden lg:table-cell">
                     {capsule.expiry}
                   </td>
-                  <td className="px-4 py-3  last:border-r-0">
+                  <td className="px-4 py-3 last:border-r-0">
                     <span
                       className={`px-3 py-1 rounded-full text-xs ${
-                        capsule.status === "Active" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                        capsule.status === "Active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-amber-100 text-amber-800"
                       }`}
                     >
                       {capsule.status}
@@ -263,17 +292,21 @@ export default function TableWithFilters({ data, onFilterChange }: TableWithFilt
       {/* Pagination */}
       <div className="flex flex-col sm:flex-row items-center justify-between mt-4 text-sm text-gray-500">
         <div className="mb-4 sm:mb-0">
-          Showing 1 to {Math.min(filteredData.length, 12)} of {filteredData.length}
+          Showing 1 to {Math.min(filteredData.length, 12)} of{" "}
+          {filteredData.length}
         </div>
         <div className="flex items-center gap-2">
           <Button label="Previous" variant="outline" size="sm" />
-          <Button label="1" size="sm" className="bg-emerald-500 hover:bg-emerald-600" />
+          <Button
+            label="1"
+            size="sm"
+            className="bg-emerald-500 hover:bg-emerald-600"
+          />
           <Button label="2" size="sm" />
           <Button label="3" variant="outline" size="sm" />
           <Button label="Next" variant="outline" size="sm" />
         </div>
       </div>
     </div>
-  )
+  );
 }
-
