@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -45,21 +47,18 @@ export default function Sidebar({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
-    // Set current route name based on pathname
     const currentRoute =
       navItems.find((item) => item.href === pathname) ||
       bottomNavItems.find((item) => item.href === pathname);
     setCurrentRouteName(currentRoute?.name || "");
   }, [pathname, setCurrentRouteName]);
 
-  // Handle sidebar collapse toggling
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    setIsCollapsed((prev) => !prev);
   };
 
   return (
     <>
-      {/* Mobile sidebar overlay */}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black/30 z-40 md:hidden"
@@ -67,10 +66,9 @@ export default function Sidebar({
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed h-screen bg-gray-50  border-gray-100 transition-all duration-300 z-50",
+          "fixed h-screen bg-gray-50 border-r border-gray-100 transition-all duration-300 z-50",
           isCollapsed ? "w-16" : "w-64",
           isMobileMenuOpen ? "left-0" : "-left-full md:left-0",
         )}
@@ -83,33 +81,32 @@ export default function Sidebar({
             <Image
               src={Logo}
               alt="Logo"
-              className={clsx(isCollapsed ? "w-30 h-30" : "w-auto h-auto")}
+              className={clsx(isCollapsed ? "w-10 h-10" : "w-auto h-auto")}
             />
           </Link>
 
-          {/* Close button for mobile */}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden p-1 rounded-md hover:bg-gray-100"
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-1 rounded-md hover:bg-gray-100"
+            >
+              <X className="h-5 w-5 text-gray-500" />
+            </button>
 
-          {/* Collapse button for desktop */}
-          <button
-            onClick={toggleSidebar}
-            className="hidden md:block p-1 rounded-md hover:bg-gray-100"
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-5 w-5 text-gray-500" />
-            ) : (
-              <ChevronLeft className="h-5 w-5 text-gray-500" />
-            )}
-          </button>
+            <button
+              onClick={toggleSidebar}
+              className="hidden md:block p-1 rounded-md hover:bg-gray-100"
+            >
+              {isCollapsed ? (
+                <ChevronRight className="h-5 w-5 text-gray-500" />
+              ) : (
+                <ChevronLeft className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Main Navigation */}
-        <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-2 py-4 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -147,7 +144,6 @@ export default function Sidebar({
           })}
         </nav>
 
-        {/* Bottom Navigation */}
         <div className="px-2 pb-6 mt-auto">
           {bottomNavItems.map((item) => (
             <Link
@@ -160,10 +156,7 @@ export default function Sidebar({
               title={isCollapsed ? item.name : ""}
             >
               <item.icon
-                className={clsx(
-                  "h-5 w-5 text-gray-400",
-                  isCollapsed ? "mr-0" : "mr-3",
-                )}
+                className={clsx("h-5 w-5", isCollapsed ? "mr-0" : "mr-3")}
               />
               {!isCollapsed && (
                 <span className="font-medium text-gray-400">{item.name}</span>
@@ -173,7 +166,6 @@ export default function Sidebar({
         </div>
       </aside>
 
-      {/* Main content spacer to push content right when sidebar is shown */}
       <div
         className={clsx(
           "hidden md:block transition-all duration-300",
