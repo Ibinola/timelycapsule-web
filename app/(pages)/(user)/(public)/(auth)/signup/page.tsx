@@ -36,7 +36,7 @@ const SignupPage = () => {
     const errors: Partial<Record<keyof SignupFormValues, string>> = {};
 
     // Log form values for debugging
-    logger.debug("Form values for validation:", values);
+    logger.debug(values, "Form values for validation:");
 
     // Validate name
     try {
@@ -44,7 +44,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.name = err.errors[0].message;
-        logger.warn("Name validation failed:", err.errors[0].message);
+        // logger.warn("Name validation failed:", err.errors[0].message);
       }
     }
 
@@ -54,7 +54,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.email = err.errors[0].message;
-        logger.warn("Email validation failed:", err.errors[0].message);
+        // logger.warn("Email validation failed:", err.errors[0].message);
       }
     }
 
@@ -64,7 +64,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.password = err.errors[0].message;
-        logger.warn("Password validation failed:", err.errors[0].message);
+        // logger.warn("Password validation failed:", err.errors[0].message);
       }
     }
 
@@ -81,10 +81,7 @@ const SignupPage = () => {
       } catch (err) {
         if (err instanceof z.ZodError) {
           errors.walletAddress = err.errors[0].message;
-          logger.warn(
-            "Wallet address validation failed:",
-            err.errors[0].message,
-          );
+          //  logger.warn("Wallet address validation failed:", err.errors[0].message);
         }
       }
     }
@@ -157,7 +154,7 @@ const SignupPage = () => {
             <AuthInput
               label="Full Name"
               name="name"
-              type="email" // Using email type for text input as the component only supports email/password
+              type="text"
               placeholder="Enter your full name"
             />
 

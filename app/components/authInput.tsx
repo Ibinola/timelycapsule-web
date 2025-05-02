@@ -18,7 +18,7 @@ export const passwordSchema = z
 interface InputProps {
   label: string;
   name: string;
-  type: "email" | "password";
+  type: "email" | "password" | "text";
   placeholder: string;
   width?: string | number;
   variant?: "user" | "admin";

@@ -8,6 +8,7 @@ import Button from "@/app/components/Button";
 import { z } from "zod";
 import { emailSchema, passwordSchema } from "@/app/components/authInput";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface LoginFormValues {
   email: string;
@@ -16,6 +17,7 @@ interface LoginFormValues {
 }
 
 const Login = () => {
+  const router = useRouter();
   const validateForm = (values: LoginFormValues) => {
     const errors: Partial<Record<keyof LoginFormValues, string>> = {};
 
@@ -38,12 +40,31 @@ const Login = () => {
     return errors;
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: LoginFormValues,
     { setSubmitting }: FormikHelpers<LoginFormValues>,
   ) => {
-    console.log("Login attempt", values);
+    // console.log("Login attempt", values);
     setSubmitting(false);
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+      const data = await response.json();
+      console.log("login successful", data);
+      router.push("/dashboard");
+    } catch (error) {
+      console.log("Login error", error);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
