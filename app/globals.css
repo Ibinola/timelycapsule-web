@@ -7,7 +7,6 @@ body {
   margin: 0;
 }
 
-
 /* h1,
 h2,
 h3,
@@ -72,4 +71,19 @@ select {
   .ql-editor {
     min-height: 400px; /* Smaller height for mobile devices */
   }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #48bb78;
+  border-radius: 4px;
+  height: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1a3c34;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
