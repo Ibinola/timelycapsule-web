@@ -36,7 +36,7 @@ const SignupPage = () => {
     const errors: Partial<Record<keyof SignupFormValues, string>> = {};
 
     // Log form values for debugging
-    logger.debug(values, "Form values for validation:");
+    logger.debug(values);
 
     // Validate name
     try {
@@ -90,30 +90,33 @@ const SignupPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (
+  const handleSubmit = async (
     values: SignupFormValues,
     { setSubmitting }: FormikHelpers<SignupFormValues>,
   ) => {
-    // Log form submission
-    logger.info("Signup form submitted with values:", {
-      name: values.name,
-      email: values.email,
-      passwordLength: values.password.length, // Don't log actual password
-      walletAddress: values.walletAddress,
-    });
+    try {
+      setSubmitting(true);
 
-    // TODO: Implement actual signup functionality
+      const response = await fetch("/api/signup", {
+        // hey contributor, remember to change this to the correct endpoint to avoid the 404 error
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    // For demonstration purposes, we're just logging the submission
-    console.log("Form submitted:", {
-      name: values.name,
-      email: values.email,
-      walletAddress: values.walletAddress,
-    });
-
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error("Signup failed");
+      }
+      const data = await response.json();
+      console.log("Signup successful", data);
       setSubmitting(false);
-    }, 500);
+
+      //hey contributor Redirect to login page or dashboard
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -196,7 +199,7 @@ const SignupPage = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#48BB78] hover:opacity-80 underline text-sm py-2 px-3 rounded-md transition duration-300 font-kumbhSans"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#48BB78] hover:opacity-80 underline text-sm py-2 px-3 rounded-md transition duration-300 font-kumbhSans bg-white"
                   onClick={() => {
                     // Add wallet connection logic here
                     logger.info("Connect wallet button clicked");

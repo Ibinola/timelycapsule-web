@@ -45,8 +45,9 @@ const Login = () => {
     { setSubmitting }: FormikHelpers<LoginFormValues>,
   ) => {
     // console.log("Login attempt", values);
-    setSubmitting(false);
+
     try {
+      setSubmitting(true);
       const response = await fetch("/api/login", {
         method: "POST",
         headers: {
@@ -61,6 +62,7 @@ const Login = () => {
       const data = await response.json();
       console.log("login successful", data);
       router.push("/dashboard");
+      setSubmitting(false);
     } catch (error) {
       console.log("Login error", error);
       alert("Login failed. Please check your credentials.");

@@ -5,15 +5,13 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Page() {
-  const [formData, setFormData] = useState({
+  const [Values, setValues] = useState({
     password: "",
     confirmPassword: "",
   });
-
   const handlePasswordSubmit = (password: string, confirmPassword: string) => {
-    setFormData((prev) => ({ ...prev, password, confirmPassword }));
-    console.log("Final Form Data:", formData);
-    alert("Password reset successfully");
+    setValues((prev) => ({ ...prev, password, confirmPassword }));
+    console.log(Values);
   };
 
   return (

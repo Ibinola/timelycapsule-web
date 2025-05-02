@@ -3,6 +3,7 @@
 import { Formik, Form, FormikHelpers } from "formik";
 import AuthInput from "@/app/components/authInput";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 interface PasswordFormValues {
   password: string;
@@ -24,6 +25,7 @@ const ResetPasswordForm = ({
 }: {
   onSubmit: (password: string, confirmPassword: string) => void;
 }) => {
+  const router = useRouter();
   const validateForm = (values: PasswordFormValues) => {
     const errors: Partial<Record<keyof PasswordFormValues, string>> = {};
 
@@ -41,13 +43,35 @@ const ResetPasswordForm = ({
     return errors;
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: PasswordFormValues,
     { setSubmitting }: FormikHelpers<PasswordFormValues>,
   ) => {
-    console.log("New Password Set:", values.password);
-    setSubmitting(false);
-    onSubmit(values.password, values.confirmPassword);
+    try {
+      setSubmitting(true);
+      const response = await fetch("/api/reset-password", {
+        //hey follow contributor, remember to change this to the correct endpoint to avoid the 404 error
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Password reset failed");
+      }
+      const data = await response.json();
+      console.log("Password reset successful", data);
+      onSubmit(values.password, values.confirmPassword);
+      setSubmitting(false);
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      //  hey follow contributor, i'm just redirecting this to the login page for now. change this to correct page when actual endpoint is available
+      router.push("/login");
+    }
   };
 
   return (
@@ -76,7 +100,7 @@ const ResetPasswordForm = ({
             type="submit"
             className="mt-7 w-full px-4 rounded-xl font-semibold text-center text-[#ffffff]  transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] h-[48px] bg-gradient-to-r from-[#48BB78] to-[#215537]   "
           >
-            Done{" "}
+            Done
           </button>
         </Form>
       )}

@@ -3,6 +3,7 @@
 import { Formik, Form, FormikHelpers } from "formik";
 import AuthInput, { emailSchema } from "@/app/components/authInput";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 interface EmailFormValues {
   email: string;
@@ -13,6 +14,7 @@ const ForgotPasswordForm = ({
 }: {
   onSubmit: (email: string) => void;
 }) => {
+  const router = useRouter();
   const validateForm = (values: EmailFormValues) => {
     const errors: Partial<Record<keyof EmailFormValues, string>> = {};
 
@@ -27,13 +29,35 @@ const ForgotPasswordForm = ({
     return errors;
   };
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: EmailFormValues,
     { setSubmitting }: FormikHelpers<EmailFormValues>,
   ) => {
-    console.log("Reset Password Email Sent To:", values.email);
-    setSubmitting(false);
-    onSubmit(values.email);
+    try {
+      setSubmitting(true);
+      const response = await fetch("/api/reset-password", {
+        //hey follow contributor, remember to change this to the correct endpoint to avoid the 404 error
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values.email),
+      });
+
+      if (!response.ok) {
+        throw new Error("Password reset failed");
+      }
+      const data = await response.json();
+      console.log("Password reset successful", data);
+      onSubmit(values.email);
+      setSubmitting(false);
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      //  hey follow contributor, i'm just redirecting this to the login page for now. change this to correct page when actual endpoint is available
+      router.push("/login");
+    }
   };
 
   return (
