@@ -146,7 +146,7 @@ const Navbar: React.FC<{ toggleMobileMenu?: () => void }> = ({
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/signin">
+          <Link href="/login">
             <button className="px-5 py-1.5 border border-green-500 text-green-500 rounded-md text-sm hover:bg-green-50 transition">
               Sign In
             </button>

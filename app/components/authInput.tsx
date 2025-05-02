@@ -55,7 +55,7 @@ export default function AuthInput({
     >
       <label
         htmlFor={name}
-        className={`text-[14px] font-[500] font-inter ${variant == "user" ? "p-[10px]" : "p-[14px_10px] text-[#424242] font-kumbhSans font-[500] text-[16px] leading-[18.06px]"}`}
+        className={`text-[14px] font-[500]  font-kumbhSans ${variant == "user" ? "py-[10px]" : "py-[14px_10px] text-[#424242] font-kumbhSans font-[500] text-[16px] leading-[18.06px]"}`}
       >
         {label}
       </label>
@@ -83,7 +83,7 @@ export default function AuthInput({
       <ErrorMessage
         name={name}
         component="p"
-        className="text-red-500 text-sm mt-1"
+        className="text-red-500 text-[12px]  font-kumbhSans"
       />
     </div>
   );
