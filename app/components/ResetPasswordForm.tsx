@@ -57,13 +57,7 @@ const ResetPasswordForm = ({
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
-        <Form className="w-full max-w-[404px] flex flex-col items-start justify-center gap-6">
-          <div>
-            <h1 className="text-[#1B212D] font-semibold text-[30px]">
-              Reset Password
-            </h1>
-          </div>
-
+        <Form className="w-full flex flex-col items-start justify-center gap-4">
           <AuthInput
             label="New Password"
             name="password"
@@ -80,7 +74,7 @@ const ResetPasswordForm = ({
           <button
             disabled={isSubmitting}
             type="submit"
-            className="w-full px-4 rounded-xl font-semibold text-center text-[#ffffff]  transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] h-[40px] bg-gradient-to-r from-[#48BB78] to-[#215537]   "
+            className="mt-7 w-full px-4 rounded-xl font-semibold text-center text-[#ffffff]  transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] h-[48px] bg-gradient-to-r from-[#48BB78] to-[#215537]   "
           >
             Done{" "}
           </button>

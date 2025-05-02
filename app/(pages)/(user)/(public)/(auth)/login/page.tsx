@@ -133,9 +133,12 @@ const Login = () => {
             <div className=" text-center mt-3">
               <span className="text-[14px] text-[#78778B] font-kumbhSans">
                 Don&apos;t have an account?
-                <a href="#" className="text-[#1A3C34] hover:underline">
+                <Link
+                  href="/signup"
+                  className="text-[#1A3C34] hover:underline pl-1"
+                >
                   Sign up for free
-                </a>
+                </Link>
               </span>
               <div className="flex justify-center md:pl-52 mt-1">
                 <Image

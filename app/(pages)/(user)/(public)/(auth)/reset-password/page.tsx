@@ -13,23 +13,30 @@ export default function Page() {
   const handlePasswordSubmit = (password: string, confirmPassword: string) => {
     setFormData((prev) => ({ ...prev, password, confirmPassword }));
     console.log("Final Form Data:", formData);
+    alert("Password reset successfully");
   };
 
   return (
-    <div className="w-full h-screen flex items-stretch justify-between">
-      {/* Left Section - Form */}
-      <section className="w-full bg-[#FFFFFF] flex flex-col items-center justify-center h-full relative p-4">
-        <div className="absolute top-[4%] lg:left-[16%] left-[5%]">
+    <section className="flex flex-col w-full md:max-w-[440px]">
+      <section className="mb-2 flex flex-col justify-start gap-32">
+        {/* Logo */}
+        <div className="sm:mt-3 md:mt-6 ">
           <Image
-            src={"/images/timelyCapsule-logo.svg"}
-            alt="logo"
+            src="/images/logo-timelycapsule.png"
+            alt="Time Capsule"
+            width={73}
             height={49}
-            width={73.97}
+            className="object-contain"
           />
         </div>
-
-        <ResetPasswordForm onSubmit={handlePasswordSubmit} />
+        <div>
+          <h2 className="text-[24px] md:text-[30px] font-bold mb-1 font-kumbhSans text-black">
+            Reset Password ?
+          </h2>
+        </div>
       </section>
-    </div>
+
+      <ResetPasswordForm onSubmit={handlePasswordSubmit} />
+    </section>
   );
 }
