@@ -30,36 +30,6 @@ export default function Page() {
 
         <ResetPasswordForm onSubmit={handlePasswordSubmit} />
       </section>
-
-      {/* Right Section - Image & Text */}
-      <section className="hidden md:flex flex-col justify-between items-stretch w-full max-w-[675px] h-full bg-black">
-        <div className="h-[75vh] w-full flex items-center justify-center">
-          <Image
-            src={"/images/hand-image.svg"}
-            alt={"image"}
-            width={100}
-            height={100}
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <div className="flex items-center justify-center bg-[#044921] p-[3%] text-center w-full h-[25vh] relative ">
-          <div className=" flex items-end gap-1 justify-center  ">
-            <h1 className="max-w-[322px] text-[#FFFFFF] font-bold text-[31px] leading-[33px]">
-              Unleash the Power of Timed Messaging
-            </h1>
-
-            <div className="w-[132.58px] h-[50.69px]  flex items-center justify-center transform rotate-[10deg] mb-[-4%] ">
-              <Image
-                src={"/images/sidetext.svg"}
-                alt="logo"
-                height={49}
-                width={73.97}
-                className=" w-full h-full  "
-              />
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

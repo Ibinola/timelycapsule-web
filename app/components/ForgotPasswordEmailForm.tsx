@@ -43,16 +43,7 @@ const ForgotPasswordForm = ({
       onSubmit={handleSubmit}
     >
       {({ isSubmitting }) => (
-        <Form className="w-full max-w-[404px] flex flex-col items-start justify-center gap-6">
-          <div>
-            <h1 className="text-[#1B212D] font-semibold text-[30px]">
-              Forgot Password?
-            </h1>
-            <p className="text-[#78778B] text-sm font-normal">
-              Kindly enter the email address attached to your account.
-            </p>
-          </div>
-
+        <Form className="w-full flex flex-col items-start justify-center gap-6">
           <AuthInput
             label="Email"
             name="email"
@@ -63,9 +54,9 @@ const ForgotPasswordForm = ({
           <button
             disabled={isSubmitting}
             type="submit"
-            className="w-full px-4 rounded-xl font-semibold text-center text-[#ffffff]  transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] h-[40px] bg-gradient-to-r from-[#48BB78] to-[#215537]   "
+            className="w-full px-4 rounded-xl font-semibold text-center text-[#ffffff]  transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] h-[48px] bg-gradient-to-r from-[#48BB78] to-[#215537] mt-6"
           >
-            Submit{" "}
+            Submit
           </button>
         </Form>
       )}
