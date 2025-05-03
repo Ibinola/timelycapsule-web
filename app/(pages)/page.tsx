@@ -34,19 +34,12 @@ export default function HomePage() {
       <Hero />
       <FooterSection />
 
-      {/* Layout with Sidebar and Form */}
       <div className="flex">
-        {/* Sidebar */}
         <Sidebar
           isMobileMenuOpen={isMobileMenuOpen}
           toggleMobileMenu={toggleMobileMenu}
           setCurrentRouteName={setCurrentRouteName}
         />
-
-        {/* Main content */}
-        <div className="flex-grow p-6 bg-white min-h-screen">
-          <UserProfileForm formState={formState} />
-        </div>
       </div>
     </>
   );
