@@ -9,7 +9,7 @@ import AuthInput, {
 } from "../../../../../components/authInput";
 import Link from "next/link";
 import logger from "@/app/utils/logger";
-import AuthScreenLayout from "@/app/components/AuthScreenLayout";
+import Image from "next/image";
 
 // Define form value types
 interface SignupFormValues {
@@ -36,7 +36,7 @@ const SignupPage = () => {
     const errors: Partial<Record<keyof SignupFormValues, string>> = {};
 
     // Log form values for debugging
-    logger.debug("Form values for validation:", values);
+    logger.debug(values);
 
     // Validate name
     try {
@@ -44,7 +44,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.name = err.errors[0].message;
-        logger.warn("Name validation failed:", err.errors[0].message);
+        // logger.warn("Name validation failed:", err.errors[0].message);
       }
     }
 
@@ -54,7 +54,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.email = err.errors[0].message;
-        logger.warn("Email validation failed:", err.errors[0].message);
+        // logger.warn("Email validation failed:", err.errors[0].message);
       }
     }
 
@@ -64,7 +64,7 @@ const SignupPage = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.password = err.errors[0].message;
-        logger.warn("Password validation failed:", err.errors[0].message);
+        // logger.warn("Password validation failed:", err.errors[0].message);
       }
     }
 
@@ -81,10 +81,7 @@ const SignupPage = () => {
       } catch (err) {
         if (err instanceof z.ZodError) {
           errors.walletAddress = err.errors[0].message;
-          logger.warn(
-            "Wallet address validation failed:",
-            err.errors[0].message,
-          );
+          //  logger.warn("Wallet address validation failed:", err.errors[0].message);
         }
       }
     }
@@ -93,41 +90,57 @@ const SignupPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (
+  const handleSubmit = async (
     values: SignupFormValues,
     { setSubmitting }: FormikHelpers<SignupFormValues>,
   ) => {
-    // Log form submission
-    logger.info("Signup form submitted with values:", {
-      name: values.name,
-      email: values.email,
-      passwordLength: values.password.length, // Don't log actual password
-      walletAddress: values.walletAddress,
-    });
+    try {
+      setSubmitting(true);
 
-    // TODO: Implement actual signup functionality
+      const response = await fetch("/api/signup", {
+        // hey contributor, remember to change this to the correct endpoint to avoid the 404 error
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    // For demonstration purposes, we're just logging the submission
-    console.log("Form submitted:", {
-      name: values.name,
-      email: values.email,
-      walletAddress: values.walletAddress,
-    });
-
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error("Signup failed");
+      }
+      const data = await response.json();
+      console.log("Signup successful", data);
       setSubmitting(false);
-    }, 500);
+
+      //hey contributor Redirect to login page or dashboard
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
-    <AuthScreenLayout
-      title="Create an account"
-      subtitle="Welcome! Please enter your details"
-      imageSrc="/images/auth-background.jpg"
-      imageAlt="TimelyCapsule authentication background"
-      overlayImageSrc="/images/overlay-image.jpg"
-      overlayImageAlt="TimelyCapsule overlay image"
-    >
+    <section className=" flex flex-col w-full md:max-w-[480px] max-h-screen mb-8 xl:pl-10">
+      <section className=" flex flex-col justify-start gap-8">
+        {/* Logo */}
+        <div className="sm:mt-3 md:mt-6 ">
+          <Image
+            src="/images/logo-timelycapsule.png"
+            alt="Time Capsule"
+            width={73}
+            height={49}
+            className="object-contain"
+          />
+        </div>
+        <div>
+          <h2 className="text-[24px] md:text-[30px] font-bold mb-1 font-kumbhSans text-black">
+            Create new account
+          </h2>
+          <p className="text-[#78778B] text-[14px] md:text-[16px] mb-4 md:mb-1 font-kumbhSans">
+            Welcome! Please enter your details
+          </p>
+        </div>
+      </section>
       <Formik
         initialValues={{
           name: "",
@@ -140,11 +153,11 @@ const SignupPage = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="space-y-6 mt-8">
+          <Form className=" mt-2">
             <AuthInput
               label="Full Name"
               name="name"
-              type="email" // Using email type for text input as the component only supports email/password
+              type="text"
               placeholder="Enter your full name"
             />
 
@@ -169,10 +182,10 @@ const SignupPage = () => {
               placeholder="Confirm your password"
             />
 
-            <div className="space-y-1">
+            <div className="space-y-2 mt-2">
               <label
                 htmlFor="walletAddress"
-                className="text-[14px] font-[500] font-inter p-[10px]"
+                className="text-[14px] font-[500] font-inter py-[8px]"
               >
                 Wallet Address
               </label>
@@ -186,7 +199,7 @@ const SignupPage = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#48BB78] to-[#215537] hover:opacity-90 text-white text-sm py-2 px-3 rounded-md transition duration-300 font-kumbhSans"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#48BB78] hover:opacity-80 underline text-sm py-2 px-3 rounded-md transition duration-300 font-kumbhSans bg-white"
                   onClick={() => {
                     // Add wallet connection logic here
                     logger.info("Connect wallet button clicked");
@@ -205,24 +218,35 @@ const SignupPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-[#48BB78] to-[#215537] hover:opacity-90 text-white font-medium py-3 px-4 rounded-md transition duration-300 mt-6 font-kumbhSans"
+              className=" mt-10 w-full h-[48px] bg-gradient-to-r from-[#48BB78] to-[#215537] hover:opacity-90 text-white font-medium py-3 px-4 rounded-[10px] transition duration-300 font-kumbhSans"
             >
               {isSubmitting ? "Creating Account..." : "Create Account"}
             </button>
 
-            <div className="text-center mt-6 font-kumbhSans text-gray-600 dark:text-gray-400">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-gray-800 hover:text-gray-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-              >
-                Sign in
-              </Link>
+            <div className=" text-center mt-3">
+              <span className="text-[14px] text-[#78778B] font-kumbhSans">
+                Already have an account?
+                <Link
+                  href="/login"
+                  className="text-[#1A3C34] hover:underline pl-1"
+                >
+                  Login
+                </Link>
+              </span>
+              <div className="flex justify-center md:pl-44 mt-1">
+                <Image
+                  src="/images/login-vector.svg"
+                  alt="Underline"
+                  width={50}
+                  height={50}
+                  className="object-contain"
+                />
+              </div>
             </div>
           </Form>
         )}
       </Formik>
-    </AuthScreenLayout>
+    </section>
   );
 };
 
