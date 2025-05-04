@@ -9,6 +9,7 @@ import { z } from "zod";
 import { emailSchema, passwordSchema } from "@/app/components/authInput";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ArgentInvisibleWalletButton from "@/app/components/InvincibleWallet";
 
 interface LoginFormValues {
   email: string;
@@ -116,6 +117,8 @@ const Login = () => {
               className="[&_input]:h-[36px] [&_input]:text-[14px] [&_label]:text-[12px] [&_label]:py-[6px]"
             />
 
+            <ArgentInvisibleWalletButton />
+
             <div className="flex flex-col md:flex-row mt-3 text-[#1B212D] justify-between items-start md:items-center gap-3 md:gap-0">
               <div className="flex items-center">
                 <input
@@ -176,6 +179,7 @@ const Login = () => {
           </Form>
         )}
       </Formik>
+
     </div>
   );
 };
