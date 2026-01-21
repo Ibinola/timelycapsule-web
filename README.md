@@ -1,14 +1,14 @@
-# TimelyCapsule
+# ourKairos
 
-**TimelyCapsule** is an open-source platform for creating and delivering time-locked digital capsules—messages, media, and crypto gifts that unlock only at a specific moment in the future. It reintroduces anticipation to digital communication by combining reliable Web2 infrastructure with blockchain-powered payments.
+**ourKairos** is an open-source platform for creating and delivering time-locked digital capsules—messages, media, and crypto gifts that unlock only at a specific moment in the future. It reintroduces anticipation to digital communication by combining reliable Web2 infrastructure with blockchain-powered payments.
 
-Originally built on **Starknet**, TimelyCapsule is actively being **migrated to the Stellar network** to enable faster confirmations, lower transaction costs, and broader accessibility, while preserving a pragmatic hybrid Web2/Web3 architecture.
+Originally built on **Starknet**, ourKairos is actively being **migrated to the Stellar network** to enable faster confirmations, lower transaction costs, and broader accessibility, while preserving a pragmatic hybrid Web2/Web3 architecture.
 
 ---
 
-## Why TimelyCapsule?
+## Why ourKairos?
 
-In a world dominated by instant messages and disposable content, TimelyCapsule is built around *intentional delivery*. Capsules are sealed, stored securely, and revealed only when the time is right.
+In a world dominated by instant messages and disposable content, ourKairos is built around *intentional delivery*. Capsules are sealed, stored securely, and revealed only when the time is right.
 
 Use cases include:
 
@@ -37,7 +37,7 @@ The platform is designed to work just as well for casual users as it does for cr
 
 ## Architecture Overview
 
-TimelyCapsule is built with modularity, scalability, and blockchain extensibility in mind.
+ourKairos is built with modularity, scalability, and blockchain extensibility in mind.
 
 | Layer          | Technology                                        |
 | -------------- | ------------------------------------------------- |
@@ -56,7 +56,7 @@ TimelyCapsule is built with modularity, scalability, and blockchain extensibilit
 The project follows a modular monorepo layout to keep concerns clearly separated and contributions easy to reason about:
 
 ```
-timelycapsule/
+ourKairos/
 ├── apps/
 │   ├── web/                # React frontend
 │   └── api/                # NestJS backend
@@ -98,14 +98,6 @@ timelycapsule/
 
 ## Related Repositories
 
-* **Smart Contracts (Blockchain Layer)**
-  Currently on Starknet, migrating to Stellar
-  👉 [TC-contract](https://github.com/enbliq/timelycapsule-contracts)
-
-* **Backend API (Standalone Repo)**
-  NestJS-powered service for capsules, users, and payments
-  👉 [TC-Backend](https://github.com/enbliq/timely-capsule-mobile-api)
-
 ---
 
 ## Getting Started
@@ -120,8 +112,8 @@ timelycapsule/
 ### Installation
 
 ```bash
-git clone https://github.com/your-org/timelycapsule.git
-cd timelycapsule
+git clone https://github.com/your-org/ourKairos.git
+cd ourKairos
 npm install
 cp .env.example .env
 ```
@@ -142,7 +134,7 @@ npm test
 
 ## Contributing
 
-TimelyCapsule is fully open-source and welcomes contributors across Web2, Web3, and product engineering.
+ourKairos is fully open-source and welcomes contributors across Web2, Web3, and product engineering.
 
 ### How to Contribute
 
@@ -166,7 +158,7 @@ TimelyCapsule is fully open-source and welcomes contributors across Web2, Web3, 
 
 For questions, design discussions, or pre-PR clarifications:
 
-👉 Telegram: ([TimelyCapsule](https://t.me/timelycapsule))
+👉 Telegram: ([ourKairos](https://t.me/ourKairos))
 
 ---
 
