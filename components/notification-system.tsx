@@ -1,45 +1,41 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Bell, X, CheckCircle, Clock, Users, Mail } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Notification } from "@/types/notification"
 
-interface Notification {
-  id: string
-  type: "invitation" | "contribution" | "status_change" | "reminder"
-  title: string
-  message: string
-  timestamp: Date
-  read: boolean
-  actionUrl?: string
-}
 
 const mockNotifications: Notification[] = [
   {
     id: "1",
-    type: "contribution",
+    type: "capsule_received",
     title: "New Contribution",
     message: "Sarah added a memory to 'Team Q4 Retrospective'",
     timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-    read: false,
+    isRead: false,
+    priority: "medium"
   },
   {
     id: "2",
-    type: "invitation",
+    type: "system",
     title: "Invitation Sent",
     message: "5 invitations sent for 'Wedding Memories' capsule",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-    read: false,
+    isRead: false,
+    priority: "low"
   },
   {
     id: "3",
-    type: "status_change",
-    title: "Capsule Sealed",
-    message: "'Graduation Memories' has been sealed and is ready to open",
+    type: "capsule_opened",
+    title: "Capsule Unlocked",
+    message: "'Graduation Memories' has been unlocked and is ready to view",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-    read: true,
+    isRead: true,
+    capsuleId: "grad-capsule-123",
+    priority: "high"
   },
   {
     id: "4",
@@ -47,51 +43,116 @@ const mockNotifications: Notification[] = [
     title: "Contribution Reminder",
     message: "Don't forget to contribute to 'Project Milestone' capsule",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
-    read: true,
+    isRead: true,
+    priority: "medium"
   },
 ]
 
 export function NotificationSystem() {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
   const [isOpen, setIsOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+  // Fetch notifications from API on component mount
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true)
+        const userId = 'demo-user' // In production, get from auth context
+        const response = await fetch(`/api/notifications?userId=${userId}`)
+        if (response.ok) {
+          const data = await response.json()
+          setNotifications(data.data || mockNotifications)
+        }
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
+    fetchNotifications()
+  }, [])
+
+  const unreadCount = notifications.filter((n: Notification) => !n.isRead).length
+
+  const markAsRead = async (id: string) => {
+    try {
+      // Update local state immediately for better UX
+      setNotifications((prev: Notification[]) => 
+        prev.map((n: Notification) => (n.id === id ? { ...n, isRead: true } : n))
+      )
+      
+      // Then update backend
+      await fetch(`/api/notifications/${id}?action=markRead`, { method: 'PATCH' })
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error)
+    }
   }
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  const markAllAsRead = async () => {
+    try {
+      const unreadNotifications = notifications.filter((n: Notification) => !n.isRead)
+      
+      // Update local state immediately
+      setNotifications((prev: Notification[]) => 
+        prev.map((n: Notification) => ({ ...n, isRead: true }))
+      )
+      
+      // Then update backend for each notification
+      await Promise.all(
+        unreadNotifications.map((n: Notification) => 
+          fetch(`/api/notifications/${n.id}?action=markRead`, { method: 'PATCH' })
+        )
+      )
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error)
+    }
   }
 
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id))
+  const removeNotification = async (id: string) => {
+    try {
+      // Update local state immediately
+      setNotifications((prev: Notification[]) => prev.filter((n: Notification) => n.id !== id))
+      
+      // Then update backend
+      await fetch(`/api/notifications/${id}`, { method: 'DELETE' })
+    } catch (error) {
+      console.error('Failed to delete notification:', error)
+    }
   }
 
   const getNotificationIcon = (type: Notification["type"]) => {
     switch (type) {
-      case "invitation":
-        return <Mail className="h-4 w-4" />
-      case "contribution":
+      case "capsule_received":
         return <CheckCircle className="h-4 w-4" />
-      case "status_change":
+      case "capsule_opened":
         return <Users className="h-4 w-4" />
+      case "capsule_expiring":
+        return <Clock className="h-4 w-4" />
+      case "system":
+        return <Mail className="h-4 w-4" />
       case "reminder":
         return <Clock className="h-4 w-4" />
+      default:
+        return <Bell className="h-4 w-4" />
     }
   }
 
   const getNotificationColor = (type: Notification["type"]) => {
     switch (type) {
-      case "invitation":
-        return "bg-blue-100 text-blue-800"
-      case "contribution":
+      case "capsule_received":
         return "bg-green-100 text-green-800"
-      case "status_change":
+      case "capsule_opened":
         return "bg-purple-100 text-purple-800"
-      case "reminder":
+      case "capsule_expiring":
         return "bg-orange-100 text-orange-800"
+      case "system":
+        return "bg-blue-100 text-blue-800"
+      case "reminder":
+        return "bg-yellow-100 text-yellow-800"
+      default:
+        return "bg-gray-100 text-gray-800"
     }
   }
 
@@ -143,7 +204,7 @@ export function NotificationSystem() {
                 <div
                   key={notification.id}
                   className={`p-4 hover:bg-gray-50 cursor-pointer border-l-4 ${
-                    notification.read ? "border-transparent" : "border-blue-500 bg-blue-50"
+                    (notification as Notification).isRead ? "border-transparent" : "border-blue-500 bg-blue-50"
                   }`}
                   onClick={() => markAsRead(notification.id)}
                 >
