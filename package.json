@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nestjs/common": "^11.1.12",
+    "@nestjs/swagger": "^11.2.5",
+    "@nestjs/typeorm": "^11.0.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
@@ -29,6 +32,9 @@
     "react-day-picker": "^9.7.0",
     "react-dom": "^19.0.0",
     "recharts": "^3.0.2",
+    "Server": "^1.0.0",
+    "stellar": "^0.0.0",
+    "stellar-sdk": "^13.3.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
