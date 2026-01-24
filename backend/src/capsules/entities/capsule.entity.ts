@@ -42,6 +42,12 @@ export class Capsule {
   @Column({ name: 'ownerId', type: 'varchar', nullable: true })
   ownerId?: string;
 
+  @Column({ type: 'timestamp', nullable: true })
+  lockedUntil?: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  unlockedAt?: Date;
+
   @CreateDateColumn()
   createdAt!: Date;
 

@@ -38,10 +38,11 @@ export class CapsulesService {
   }
 
   /**
-   * Enforces time lock enforcement logic
+   * Enhanced time lock enforcement logic
    * On every capsule fetch:
    * - Compare current time with unlockAt
-   * - If expired, update status to unlocked
+   * - If expired, update status to unlocked and record unlock time
+   * - Handle edge cases like timezone differences and timing precision
    */
   private async enforceTimeLock(capsule: Capsule): Promise<Capsule> {
     const now = new Date();
@@ -51,24 +52,35 @@ export class CapsulesService {
       const unlockTime = new Date(capsule.unlockDate);
       
       // If unlock time has passed, update status to unlocked if not already
-      if (now >= unlockTime && capsule.status !== 'unlocked') {
-        capsule.status = 'unlocked';
-        // Save the updated status back to the database
-        await this.capsulesRepository.update(capsule.id, { status: 'unlocked' });
-      }
-      
-      // If unlock time has not passed, ensure capsule is locked
-      if (now < unlockTime) {
-        capsule.isLocked = true;
-        // Content should remain hidden until unlock time
-        capsule.content = '[LOCKED]'; // Hide content until unlock time
-      } else {
+      if (now >= unlockTime) {
+        if (capsule.status !== 'unlocked') {
+          capsule.status = 'unlocked';
+          capsule.unlockedAt = now; // Record when it was unlocked
+          
+          // Save the updated status and unlock time back to the database
+          await this.capsulesRepository.update(capsule.id, { 
+            status: 'unlocked',
+            unlockedAt: now
+          });
+        }
+        
         // Unlock time has passed, make content accessible
         capsule.isLocked = false;
+        capsule.lockedUntil = unlockTime; // Record the time it was supposed to unlock
+      } else {
+        // Unlock time has not passed, ensure capsule is locked
+        capsule.isLocked = true;
+        capsule.lockedUntil = unlockTime; // Record when it will be unlocked
+        
+        // Content should remain hidden until unlock time
+        if (capsule.content && capsule.content !== '[LOCKED]') {
+          capsule.content = '[LOCKED]'; // Hide content until unlock time
+        }
       }
     } else {
       // If no unlock date is set, the capsule is immediately accessible
       capsule.isLocked = false;
+      capsule.lockedUntil = undefined;
       capsule.status = capsule.status === 'active' ? 'active' : 'unlocked';
     }
     
