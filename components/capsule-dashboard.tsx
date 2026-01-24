@@ -1,109 +1,121 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Search, Calendar, Users, Clock, CheckCircle, Lock, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react"
+import { Search, Calendar, Users, Clock, CheckCircle, Lock, MoreHorizontal, Eye, Edit, Trash2, PackagePlus } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { CountdownTimer } from "@/components/countdown-timer"
+import { getCapsules, Capsule } from "@/lib/api/capsules"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
-interface CapsuleData {
-  id: string
-  title: string
-  description: string
-  openDate: string
-  createdAt: string
-  status: "active" | "sealed" | "opened"
-  collaboratorCount: number
-  contributedCount: number
-  category: string
+interface GroupedCapsules {
+  locked: Capsule[];
+  unlocked: Capsule[];
 }
 
-const mockCapsules: CapsuleData[] = [
-  {
-    id: "1",
-    title: "Team Q4 Retrospective",
-    description: "Looking back at our achievements and challenges",
-    openDate: "2025-01-01",
-    createdAt: "2024-12-01",
-    status: "active",
-    collaboratorCount: 8,
-    contributedCount: 5,
-    category: "Work",
-  },
-  {
-    id: "2",
-    title: "Sarah's Wedding Memories",
-    description: "Collecting wishes and memories for the happy couple",
-    openDate: "2025-06-15",
-    createdAt: "2024-11-15",
-    status: "sealed",
-    collaboratorCount: 25,
-    contributedCount: 25,
-    category: "Personal",
-  },
-  {
-    id: "3",
-    title: "Class of 2024 Graduation",
-    description: "Preserving our college memories",
-    openDate: "2029-05-20",
-    createdAt: "2024-05-20",
-    status: "opened",
-    collaboratorCount: 45,
-    contributedCount: 42,
-    category: "Education",
-  },
-]
-
 export function CapsuleDashboard() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [capsules, setCapsules] = useState<Capsule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const router = useRouter();
 
-  const filteredCapsules = mockCapsules.filter((capsule) => {
-    const matchesSearch =
-      capsule.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      capsule.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || capsule.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  useEffect(() => {
+    const fetchCapsules = async () => {
+      try {
+        setLoading(true);
+        const data = await getCapsules();
+        setCapsules(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load capsules");
+        console.error("Error fetching capsules:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCapsules();
+  }, []);
+
+  // Group capsules by status
+  const groupedCapsules: GroupedCapsules = {
+    locked: capsules.filter((capsule: Capsule) => capsule.status === "locked"),
+    unlocked: capsules.filter((capsule: Capsule) => capsule.status === "unlocked")
+  };
+
+  // Apply filters to both groups
+  const filteredGroups = {
+    locked: groupedCapsules.locked.filter((capsule: Capsule) => {
+      const matchesSearch =
+        capsule.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || capsule.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    }),
+    unlocked: groupedCapsules.unlocked.filter((capsule: Capsule) => {
+      const matchesSearch =
+        capsule.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || capsule.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+  };
+
+  // Calculate statistics
+  const totalCapsules = capsules.length;
+  const lockedCapsules = capsules.filter((c: Capsule) => c.status === "locked").length;
+  const unlockedCapsules = capsules.filter((c: Capsule) => c.status === "unlocked").length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "bg-blue-100 text-blue-800"
-      case "sealed":
-        return "bg-yellow-100 text-yellow-800"
-      case "opened":
-        return "bg-green-100 text-green-800"
+      case "locked":
+        return "bg-yellow-100 text-yellow-800";
+      case "unlocked":
+        return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active":
-        return <Clock className="h-4 w-4" />
-      case "sealed":
-        return <Lock className="h-4 w-4" />
-      case "opened":
-        return <CheckCircle className="h-4 w-4" />
+      case "locked":
+        return <Lock className="h-4 w-4" />;
+      case "unlocked":
+        return <CheckCircle className="h-4 w-4" />;
       default:
-        return null
+        return null;
     }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-3">Loading capsules...</span>
+      </div>
+    );
   }
 
-  const calculateProgress = (contributed: number, total: number) => {
-    return total > 0 ? (contributed / total) * 100 : 0
+  if (error) {
+    return (
+      <div className="rounded-md border border-destructive p-4 bg-destructive/10">
+        <h3 className="font-medium text-destructive">Error loading capsules</h3>
+        <p className="text-sm text-destructive/80">{error}</p>
+        <Button 
+          className="mt-3" 
+          onClick={() => window.location.reload()}
+          variant="outline"
+        >
+          Retry
+        </Button>
+      </div>
+    );
   }
-
-  // Statistics
-  const totalCapsules = mockCapsules.length
-  const activeCapsules = mockCapsules.filter((c) => c.status === "active").length
-  const sealedCapsules = mockCapsules.filter((c) => c.status === "sealed").length
-  const openedCapsules = mockCapsules.filter((c) => c.status === "opened").length
 
   return (
     <div className="space-y-6">
@@ -116,7 +128,7 @@ export function CapsuleDashboard() {
                 <p className="text-sm font-medium text-gray-600">Total Capsules</p>
                 <p className="text-2xl font-bold">{totalCapsules}</p>
               </div>
-              <Calendar className="h-8 w-8 text-gray-400" />
+              <PackagePlus className="h-8 w-8 text-gray-400" />
             </div>
           </CardContent>
         </Card>
@@ -125,20 +137,8 @@ export function CapsuleDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active</p>
-                <p className="text-2xl font-bold text-blue-600">{activeCapsules}</p>
-              </div>
-              <Clock className="h-8 w-8 text-blue-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Sealed</p>
-                <p className="text-2xl font-bold text-yellow-600">{sealedCapsules}</p>
+                <p className="text-sm font-medium text-gray-600">Locked</p>
+                <p className="text-2xl font-bold text-yellow-600">{lockedCapsules}</p>
               </div>
               <Lock className="h-8 w-8 text-yellow-400" />
             </div>
@@ -149,10 +149,28 @@ export function CapsuleDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Opened</p>
-                <p className="text-2xl font-bold text-green-600">{openedCapsules}</p>
+                <p className="text-sm font-medium text-gray-600">Unlocked</p>
+                <p className="text-2xl font-bold text-green-600">{unlockedCapsules}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Ready to Open</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {groupedCapsules.locked.filter((c: Capsule) => {
+                    const unlockDate = new Date(c.unlockDate).getTime();
+                    const now = new Date().getTime();
+                    return unlockDate <= now;
+                  }).length}
+                </p>
+              </div>
+              <Clock className="h-8 w-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
@@ -180,114 +198,188 @@ export function CapsuleDashboard() {
                 All
               </Button>
               <Button
-                variant={statusFilter === "active" ? "default" : "outline"}
+                variant={statusFilter === "locked" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setStatusFilter("active")}
+                onClick={() => setStatusFilter("locked")}
               >
-                Active
+                Locked
               </Button>
               <Button
-                variant={statusFilter === "sealed" ? "default" : "outline"}
+                variant={statusFilter === "unlocked" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setStatusFilter("sealed")}
+                onClick={() => setStatusFilter("unlocked")}
               >
-                Sealed
-              </Button>
-              <Button
-                variant={statusFilter === "opened" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setStatusFilter("opened")}
-              >
-                Opened
+                Unlocked
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Capsules List */}
+      {/* Locked Capsules Section */}
       <div className="space-y-4">
-        {filteredCapsules.map((capsule) => (
-          <Card key={capsule.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold">{capsule.title}</h3>
-                    <Badge className={getStatusColor(capsule.status)}>
-                      {getStatusIcon(capsule.status)}
-                      <span className="ml-1 capitalize">{capsule.status}</span>
-                    </Badge>
-                    <Badge variant="outline">{capsule.category}</Badge>
-                  </div>
-
-                  <p className="text-gray-600 mb-4">{capsule.description}</p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Calendar className="h-4 w-4" />
-                      <span>Opens: {new Date(capsule.openDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Users className="h-4 w-4" />
-                      <span>{capsule.collaboratorCount} collaborators</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4" />
-                      <span>
-                        {capsule.contributedCount}/{capsule.collaboratorCount} contributed
-                      </span>
-                    </div>
-                  </div>
-
-                  {capsule.status === "active" && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>
-                          {Math.round(calculateProgress(capsule.contributedCount, capsule.collaboratorCount))}%
-                        </span>
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Lock className="h-5 w-5 text-yellow-600" />
+          Locked Capsules ({filteredGroups.locked.length})
+        </h2>
+        
+        {filteredGroups.locked.length > 0 ? (
+          <div className="space-y-4">
+            {filteredGroups.locked.map((capsule: Capsule) => (
+              <Card 
+                key={capsule.id} 
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => router.push(`/capsules/${capsule.id}`)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-semibold">{capsule.title}</h3>
+                        <Badge className={getStatusColor(capsule.status)}>
+                          {getStatusIcon(capsule.status)}
+                          <span className="ml-1 capitalize">{capsule.status}</span>
+                        </Badge>
                       </div>
-                      <Progress value={calculateProgress(capsule.contributedCount, capsule.collaboratorCount)} />
-                    </div>
-                  )}
-                </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Details
-                    </DropdownMenuItem>
-                    {capsule.status === "active" && (
-                      <DropdownMenuItem>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Capsule
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem className="text-red-600">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Capsule
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                      {capsule.description && (
+                        <p className="text-gray-600 mb-4">{capsule.description}</p>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Calendar className="h-4 w-4" />
+                          <span>Unlock Date: {new Date(capsule.unlockDate).toLocaleDateString()}</span>
+                        </div>
+                        
+                        <div className="flex flex-col">
+                          <span className="text-sm text-gray-600 mb-1">Time Until Unlock:</span>
+                          <CountdownTimer 
+                            deadline={new Date(capsule.unlockDate).getTime()} 
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Capsule
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="text-center py-12">
+              <Lock className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-lg font-semibold mb-2">No locked capsules</h3>
+              <p className="text-gray-600">You don't have any locked capsules at the moment</p>
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
 
-      {filteredCapsules.length === 0 && (
+      {/* Unlocked Capsules Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <CheckCircle className="h-5 w-5 text-green-600" />
+          Unlocked Capsules ({filteredGroups.unlocked.length})
+        </h2>
+        
+        {filteredGroups.unlocked.length > 0 ? (
+          <div className="space-y-4">
+            {filteredGroups.unlocked.map((capsule: Capsule) => (
+              <Card 
+                key={capsule.id} 
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => router.push(`/capsules/${capsule.id}`)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-semibold">{capsule.title}</h3>
+                        <Badge className={getStatusColor(capsule.status)}>
+                          {getStatusIcon(capsule.status)}
+                          <span className="ml-1 capitalize">{capsule.status}</span>
+                        </Badge>
+                      </div>
+
+                      {capsule.description && (
+                        <p className="text-gray-600 mb-4">{capsule.description}</p>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Calendar className="h-4 w-4" />
+                          <span>Unlocked: {new Date(capsule.unlockDate).toLocaleDateString()}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Clock className="h-4 w-4" />
+                          <span>Created: {new Date(capsule.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Capsule
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="text-center py-12">
+              <CheckCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-lg font-semibold mb-2">No unlocked capsules</h3>
+              <p className="text-gray-600">You don't have any unlocked capsules at the moment</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Empty State for Overall */}
+      {totalCapsules === 0 && (
         <Card>
           <CardContent className="text-center py-12">
-            <Search className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-lg font-semibold mb-2">No capsules found</h3>
-            <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+            <PackagePlus className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+            <h3 className="text-xl font-semibold mb-2">No capsules yet</h3>
+            <p className="text-gray-600 mb-4">You haven't created any capsules yet. Start by creating your first time-locked capsule.</p>
+            <Button>
+              <Link href="/create-capsule">Create Your First Capsule</Link>
+            </Button>
           </CardContent>
         </Card>
       )}
