@@ -1,140 +1,173 @@
 # ourKairos
 
-**ourKairos** is an open-source platform for creating and delivering time-locked digital capsules—messages, media, and crypto gifts that unlock only at a specific moment in the future. It reintroduces anticipation to digital communication by combining reliable Web2 infrastructure with blockchain-powered payments.
+**ourKairos** is an open-source platform for creating and delivering **time-locked digital capsules**—messages, media, and crypto gifts that unlock only at a specific moment in the future.
 
-Originally built on **Starknet**, ourKairos is actively being **migrated to the Stellar network** to enable faster confirmations, lower transaction costs, and broader accessibility, while preserving a pragmatic hybrid Web2/Web3 architecture.
+It reintroduces anticipation to digital communication by combining reliable **Web2 infrastructure** with **blockchain-powered payments**.
+
+Originally built on **Starknet**, ourKairos is actively being **migrated to the Stellar network** to enable faster confirmations, lower transaction costs, and broader accessibility—while preserving a pragmatic hybrid Web2/Web3 architecture.
 
 ---
 
-## Why ourKairos?
+## ✨ Why ourKairos?
 
-In a world dominated by instant messages and disposable content, ourKairos is built around _intentional delivery_. Capsules are sealed, stored securely, and revealed only when the time is right.
+In a world dominated by instant messages and disposable content, ourKairos is built around **intentional delivery**.
 
-Use cases include:
+Capsules are sealed, stored securely, and revealed only when the time is right.
+
+**Use cases include:**
 
 - Future messages to yourself or others
 - Birthday and anniversary surprises
 - Scheduled video or audio drops
 - Crypto gifts delivered at meaningful moments
 
-The platform is designed to work just as well for casual users as it does for crypto-native users, supporting **guest access**, **registered accounts**, and **subscription-powered perks**.
+The platform is designed to work just as well for casual users as it does for crypto-native users, supporting:
+
+- **Guest access**
+- **Registered accounts**
+- **Subscription-powered perks**
 
 ---
 
-## Core Features
+## 🚀 Core Features
 
-- **Time-Locked Capsules** – Define exactly when a capsule becomes accessible
-- **Multi-Media Support** – Text, images, videos, and crypto gifts
-- **Hybrid Web2 / Web3 Design** –
+- **Time-Locked Capsules**  
+  Define exactly when a capsule becomes accessible
+
+- **Multi-Media Support**  
+  Text, images, videos, and crypto gifts
+
+- **Hybrid Web2 / Web3 Architecture**
   - Web2 for storage, integrity, and performance
   - Web3 for payments, subscriptions, and ownership
 
-- **Flexible Access** – Guest users and authenticated accounts
-- **Custom Delivery Controls** – Recipients, unlock dates, reminders, and visibility
-- **Secure & Scalable** – Built to grow with usage and contributors
+- **Flexible Access**  
+  Guest users and authenticated accounts
+
+- **Custom Delivery Controls**  
+  Recipients, unlock dates, reminders, and visibility
+
+- **Secure & Scalable**  
+  Built to grow with usage and contributors
 
 ---
 
-## Architecture Overview
+## 🏗 Architecture Overview
 
-ourKairos is built with modularity, scalability, and blockchain extensibility in mind.
+ourKairos is built as a **modular monorepo** using **Turborepo**, ensuring scalability and clean separation of concerns.
 
-| Layer          | Technology                                        |
-| -------------- | ------------------------------------------------- |
-| Frontend       | React (Web)                                       |
-| Backend API    | NestJS                                            |
-| Database       | MongoDB                                           |
-| Blockchain     | **Stellar** (migration in progress from Starknet) |
-| Payments       | Stellar-based subscriptions and crypto gifts      |
-| Authentication | NextAuth.js                                       |
-| File Storage   | Cloud object storage                              |
+| Layer          | Technology                       |
+| -------------- | -------------------------------- |
+| **Monorepo**   | Turborepo + pnpm workspaces      |
+| **Frontend**   | Next.js (App Router)             |
+| **Backend**    | Express.js + TypeScript          |
+| **Database**   | MongoDB                          |
+| **Blockchain** | Stellar (Payments & Time Bounds) |
+| **Services**   | Standalone Node.js workers       |
 
 ---
 
-## Repository Structure
+## 📁 Repository Structure
 
-The project follows a modular monorepo layout to keep concerns clearly separated and contributions easy to reason about:
-
-```
+```text
 ourKairos/
 ├── apps/
-│   ├── web/                # React frontend
-│   └── api/                # NestJS backend
-├── libs/
-│   ├── capsules/           # Core capsule models & logic
-│   ├── users/              # Authentication & user management
-│   ├── payments/           # Stellar payments & subscriptions
-│   └── utils/              # Shared helpers and middleware
-├── tests/                  # Unit & integration tests
-├── .env.example
+│   ├── web/        # Next.js frontend application
+│   ├── api/        # Express.js backend API
+│   └── stellar/    # Stellar payment & verification service
+│
+├── packages/
+│   ├── config/     # Shared TSConfig and ESLint rules
+│   ├── types/      # Shared TypeScript interfaces
+│   └── utils/      # Shared helper functions
+│
+├── turbo.json      # Turborepo pipeline configuration
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## API Highlights
-
-### Capsules
-
-- `POST /capsules` – Create a new capsule
-- `GET /capsules/:id` – Retrieve capsule details
-- `PATCH /capsules/:id` – Update capsule metadata or delivery rules
-- `DELETE /capsules/:id` – Delete a capsule
-
-### Users
-
-- `POST /auth/register` – Register an account
-- `POST /auth/login` – Authenticate a user
-- `GET /auth/me` – Retrieve the current user
-
-### Payments (Stellar)
-
-- `POST /payments/intent` – Initialize a payment or subscription
-- `POST /payments/confirm` – Confirm a completed payment
-- `GET /payments/:id` – Retrieve payment details
-
----
-
-## Related Repositories
-
----
-
-## Getting Started
+## 🧰 Getting Started
 
 ### Prerequisites
 
-- Node.js ≥ 18
-- MongoDB
-- Stellar Testnet account
-- npm or Yarn
+- **Node.js** ≥ 18
+- **pnpm**
+
+  ```bash
+  npm install -g pnpm
+  ```
+
+- **MongoDB** (local or Atlas)
+
+---
 
 ### Installation
 
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/your-org/ourKairos.git
+   cd ourKairos
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env` file in `apps/api/`:
+
+   ```env
+   MONGO_URI=mongodb://localhost:27017/ourkairos
+   PORT=3001
+   ```
+
+---
+
+### ▶️ Run Locally
+
+Start the full stack (Frontend, API, and Stellar service):
+
 ```bash
-git clone https://github.com/your-org/ourKairos.git
-cd ourKairos
-npm install
-cp .env.example .env
+pnpm dev
 ```
 
-### Run Locally
+- **Frontend:** [http://localhost:3000](http://localhost:3000)
+- **API:** [http://localhost:3001](http://localhost:3001)
+- **Stellar Service:** Background worker
+
+---
+
+### 🏗 Build for Production
 
 ```bash
-npm run dev
-```
-
-### Testing
-
-```bash
-npm test
+pnpm build
 ```
 
 ---
 
-## Contributing
+## 🔌 API Highlights
 
-ourKairos is fully open-source and welcomes contributors across Web2, Web3, and product engineering.
+### Capsules
+
+- `POST /capsules` — Create a new capsule
+- `GET /capsules/:id` — Retrieve capsule details
+- `PATCH /capsules/:id` — Seal or update a capsule
+
+### System
+
+- `GET /health` — API & database health check
+
+---
+
+## 🤝 Contributing
+
+ourKairos is fully open-source and welcomes contributors across **Web2**, **Web3**, and **product engineering**.
 
 ### How to Contribute
 
@@ -142,15 +175,13 @@ ourKairos is fully open-source and welcomes contributors across Web2, Web3, and 
 2. Create a feature branch from `main`
 3. Pick an open issue or propose a new one
 4. Keep pull requests focused and well-documented
-5. Add tests where applicable
-6. Open a PR with context and screenshots if relevant
+5. **Always run `pnpm dev` before submitting**
 
 ### Contribution Guidelines
 
-- Respect the modular structure
-- Avoid breaking capsule or payment flows
-- Document new endpoints and workflows
-- Use clear commit messages and small PRs
+- **Shared Logic:** Place reusable logic in `packages/`
+- **Types:** Define all data models in `packages/types`
+- **Linting:** Run `pnpm lint` before pushing
 
 ---
 
@@ -158,7 +189,7 @@ ourKairos is fully open-source and welcomes contributors across Web2, Web3, and 
 
 For questions, design discussions, or pre-PR clarifications:
 
-👉 Telegram: ([ourKairos](https://t.me/ourKairos))
+👉 **Telegram:** [https://t.me/ourKairos](https://t.me/ourKairos)
 
 ---
 
