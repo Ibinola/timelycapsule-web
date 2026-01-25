@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -18,12 +20,17 @@
     "mongoose": "^9.1.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@ourkairos/config": "workspace:*",
     "@types/cors": "^2.8.19",
+    "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.6",
     "@types/node": "^20.19.30",
+    "eslint": "^9.39.2",
+    "globals": "^17.1.0",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.53.1"
   }
 }
