@@ -2,6 +2,9 @@
   "name": "@ourkairos/utils",
   "version": "1.0.0",
   "description": "",
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
   "scripts": {},
   "keywords": [],
   "author": "",
