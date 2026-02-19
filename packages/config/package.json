@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"No tests configured yet for @ourkairos/config\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
