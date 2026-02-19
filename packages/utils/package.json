@@ -5,7 +5,9 @@
   "dependencies": {
     "zod": "^4.1.12"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"No tests configured yet for @ourkairos/utils\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

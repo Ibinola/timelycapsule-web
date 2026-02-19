@@ -39,7 +39,7 @@ export const config: AppConfig = {
 export const getServerKeypair = (): Keypair => {
   try {
     return Keypair.fromSecret(config.secretKey);
-  } catch (error) {
+  } catch {
     throw new Error(
       "❌ Invalid STELLAR_SECRET_KEY format. Ensure it starts with 'S'.",
     );

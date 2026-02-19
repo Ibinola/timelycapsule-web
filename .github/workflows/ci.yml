@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Lint, Typecheck, and Build
+    name: Lint, Typecheck, Build, and Test
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       - name: 🥡 Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9
+          version: 10.14.0
 
       - name: 🧩 Get pnpm store directory
         shell: bash
@@ -40,6 +40,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: ♻️ Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: ${{ runner.os }}-turbo-${{ github.ref_name }}-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json', '.github/workflows/ci.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-${{ github.ref_name }}-
+            ${{ runner.os }}-turbo-
+
       - name: 📦 Install Dependencies
         run: pnpm install --frozen-lockfile
 
@@ -51,3 +60,6 @@ jobs:
 
       - name: 🏗️ Build (All Apps)
         run: pnpm turbo build
+
+      - name: 🧪 Test (All Apps)
+        run: pnpm turbo test

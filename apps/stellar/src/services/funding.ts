@@ -1,6 +1,14 @@
 import { config, getServerKeypair, StellarNetwork } from '../config';
 
 const FRIENDBOT_URL = 'https://friendbot.stellar.org';
+type HorizonBalance = {
+  asset_type: string;
+  balance: string;
+};
+
+type HorizonAccountResponse = {
+  balances: HorizonBalance[];
+};
 
 export const ensureAccountFunded = async () => {
   if (config.network === StellarNetwork.MAINNET) {
@@ -22,9 +30,9 @@ export const ensureAccountFunded = async () => {
       return;
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as HorizonAccountResponse;
     const nativeBalance = data.balances.find(
-      (b: any) => b.asset_type === 'native',
+      (balance) => balance.asset_type === 'native',
     );
 
     if (nativeBalance && parseFloat(nativeBalance.balance) < 10) {
