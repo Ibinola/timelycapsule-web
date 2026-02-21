@@ -185,6 +185,11 @@ ourKairos is fully open-source and welcomes contributors across **Web2**, **Web3
 
 ---
 
+
+### Resources
+
+- [Figma: ](https://www.figma.com/design/3OcC5Evm7nKmM5FSWrPYZZ/Ourkairos?node-id=0-1&t=7SkdNDM1RezCMz13-1)
+
 ## 💬 Support & Community
 
 For questions, design discussions, or pre-PR clarifications:
