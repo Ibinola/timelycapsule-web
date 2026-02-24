@@ -30,14 +30,20 @@ pnpm dev
 
 - `pnpm dev`
 - `pnpm dev:b02`
+- `pnpm dev:b03`
 - `pnpm build`
 - `pnpm build:b02`
+- `pnpm build:b03`
 - `pnpm typecheck`
 - `pnpm typecheck:b02`
+- `pnpm typecheck:b03`
 - `pnpm lint`
 - `pnpm lint:b02`
+- `pnpm lint:b03`
 - `pnpm test`
 - `pnpm test:b02`
+- `pnpm test:b03`
+- `pnpm run:b03 -- --url <endpoint> --concurrency 5 --duration 20 --profile create-capsule`
 
 ## Cleanup
 

@@ -6,13 +6,19 @@
   "scripts": {
     "dev": "pnpm --filter @ourkairos/lab-shell dev",
     "dev:b02": "pnpm --filter @ourkairos/capsule-replay dev",
+    "dev:b03": "pnpm --filter @ourkairos/traffic-harness dev",
     "build": "pnpm --filter @ourkairos/lab-shell build",
     "build:b02": "pnpm --filter @ourkairos/capsule-replay build",
+    "build:b03": "pnpm --filter @ourkairos/traffic-harness build",
     "typecheck": "pnpm --filter @ourkairos/lab-shell typecheck",
     "typecheck:b02": "pnpm --filter @ourkairos/capsule-replay typecheck",
+    "typecheck:b03": "pnpm --filter @ourkairos/traffic-harness typecheck",
     "lint": "pnpm --filter @ourkairos/lab-shell lint",
     "lint:b02": "pnpm --filter @ourkairos/capsule-replay lint",
+    "lint:b03": "pnpm --filter @ourkairos/traffic-harness lint",
     "test": "pnpm --filter @ourkairos/lab-shell test",
-    "test:b02": "pnpm --filter @ourkairos/capsule-replay test"
+    "test:b02": "pnpm --filter @ourkairos/capsule-replay test",
+    "test:b03": "pnpm --filter @ourkairos/traffic-harness test",
+    "run:b03": "pnpm --filter @ourkairos/traffic-harness run cli"
   }
 }
