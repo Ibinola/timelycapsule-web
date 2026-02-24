@@ -29,10 +29,15 @@ pnpm dev
 ## Available Scripts
 
 - `pnpm dev`
+- `pnpm dev:b02`
 - `pnpm build`
+- `pnpm build:b02`
 - `pnpm typecheck`
+- `pnpm typecheck:b02`
 - `pnpm lint`
+- `pnpm lint:b02`
 - `pnpm test`
+- `pnpm test:b02`
 
 ## Cleanup
 

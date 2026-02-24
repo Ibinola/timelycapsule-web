@@ -5,9 +5,14 @@
   "packageManager": "pnpm@10.14.0",
   "scripts": {
     "dev": "pnpm --filter @ourkairos/lab-shell dev",
+    "dev:b02": "pnpm --filter @ourkairos/capsule-replay dev",
     "build": "pnpm --filter @ourkairos/lab-shell build",
+    "build:b02": "pnpm --filter @ourkairos/capsule-replay build",
     "typecheck": "pnpm --filter @ourkairos/lab-shell typecheck",
+    "typecheck:b02": "pnpm --filter @ourkairos/capsule-replay typecheck",
     "lint": "pnpm --filter @ourkairos/lab-shell lint",
-    "test": "pnpm --filter @ourkairos/lab-shell test"
+    "lint:b02": "pnpm --filter @ourkairos/capsule-replay lint",
+    "test": "pnpm --filter @ourkairos/lab-shell test",
+    "test:b02": "pnpm --filter @ourkairos/capsule-replay test"
   }
 }
