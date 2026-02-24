@@ -1,0 +1,13 @@
+{
+  "name": "@ourkairos/track-b",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.14.0",
+  "scripts": {
+    "dev": "pnpm --filter @ourkairos/lab-shell dev",
+    "build": "pnpm --filter @ourkairos/lab-shell build",
+    "typecheck": "pnpm --filter @ourkairos/lab-shell typecheck",
+    "lint": "pnpm --filter @ourkairos/lab-shell lint",
+    "test": "pnpm --filter @ourkairos/lab-shell test"
+  }
+}
