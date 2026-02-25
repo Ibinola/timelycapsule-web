@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getMessages, isLocale, type Locale } from '@/lib/i18n';
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getMessages, isLocale, type Locale } from "@/app/lib/i18n";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -24,7 +24,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           </Link>
           <div className="flex items-center gap-5 text-sm text-slate-700">
             <Link href={`/${locale}`}>{messages.navbar.home}</Link>
-            <Link href={`/${locale}/dashboard`}>{messages.navbar.dashboard}</Link>
+            <Link href={`/${locale}/dashboard`}>
+              {messages.navbar.dashboard}
+            </Link>
             <Link href={`/${locale}/login`}>{messages.navbar.login}</Link>
           </div>
         </div>

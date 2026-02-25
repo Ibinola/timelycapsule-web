@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation';
-import { getMessages, isLocale, type Locale } from '@/lib/i18n';
+import { notFound } from "next/navigation";
+import { getMessages, isLocale, type Locale } from "@/app/lib/i18n";
 
 type DashboardPageProps = {
   params: Promise<{ locale: string }>;
@@ -13,5 +13,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   const messages = await getMessages(locale as Locale);
 
-  return <h1 className="text-3xl font-semibold text-slate-900">{messages.dashboard.title}</h1>;
+  return (
+    <h1 className="text-3xl font-semibold text-slate-900">
+      {messages.dashboard.title}
+    </h1>
+  );
 }
