@@ -2,3 +2,4 @@ packages:
   - "lab-shell"
   - "capsule-replay"
   - "traffic-harness"
+  - "ui-lab"

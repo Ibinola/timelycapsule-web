@@ -19,6 +19,7 @@
     "test": "pnpm --filter @ourkairos/lab-shell test",
     "test:b02": "pnpm --filter @ourkairos/capsule-replay test",
     "test:b03": "pnpm --filter @ourkairos/traffic-harness test",
+    "test:b04": "pnpm --filter @ourkairos/ui-lab test",
     "run:b03": "pnpm --filter @ourkairos/traffic-harness run cli"
   }
 }
