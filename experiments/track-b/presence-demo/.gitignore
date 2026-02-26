@@ -1,0 +1,6 @@
+node_modules
+pnpm-lock.yaml
+packages/server/node_modules
+packages/server/dist
+packages/client/node_modules
+packages/client/dist
