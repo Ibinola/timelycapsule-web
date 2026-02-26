@@ -1,0 +1,50 @@
+[
+  {
+    "id": "msg_001",
+    "label": "Morning Promo - New York",
+    "localTime": "2025-03-09T02:30:00",
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "msg_002",
+    "label": "Flash Sale - London",
+    "localTime": "2025-10-26T01:15:00",
+    "timezone": "Europe/London"
+  },
+  {
+    "id": "msg_003",
+    "label": "Event Reminder - Lagos",
+    "localTime": "2025-08-15T09:00:00",
+    "timezone": "Africa/Lagos"
+  },
+  {
+    "id": "msg_004",
+    "label": "Newsletter - Invalid Zone",
+    "localTime": "2025-06-01T10:00:00",
+    "timezone": "America/NewYork"
+  },
+  {
+    "id": "msg_005",
+    "label": "Midnight Drop - Tokyo",
+    "localTime": "2025-11-03T00:00:00",
+    "timezone": "Asia/Tokyo"
+  },
+  {
+    "id": "msg_006",
+    "label": "DST Ambiguous - Chicago",
+    "localTime": "2025-11-02T01:30:00",
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "msg_007",
+    "label": "Campaign Blast - Bogota",
+    "localTime": "2025-07-20T08:00:00",
+    "timezone": "America/Bogota"
+  },
+  {
+    "id": "msg_008",
+    "label": "Bad Zone String",
+    "localTime": "2025-09-10T14:00:00",
+    "timezone": "UTC+5"
+  }
+]
