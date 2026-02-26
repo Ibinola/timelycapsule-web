@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "check:timezones": "node app/lib/checkTimezones.js app/data/schedules.json",
+    "check:delivery": "node lib/checkDeliveryWindows.js data/input.json",
     "test": "echo \"No tests configured yet for web\""
   },
   "dependencies": {
